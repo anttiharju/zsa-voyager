@@ -4,6 +4,12 @@
 #define MOON_LED_LEVEL LED_LEVEL
 #define ML_SAFE_RANGE SAFE_RANGE
 
+enum layers {
+  _BASE,
+  _LOWER,
+  _UPPER,
+};
+
 enum custom_keycodes {
   RGB_SLD = ML_SAFE_RANGE,
   ST_MACRO_0,
@@ -11,8 +17,12 @@ enum custom_keycodes {
   ST_MACRO_2,
   MAC_SPOTLIGHT,
   MAC_DND,
+  LEFT_LAYER_KEY,
+  RIGHT_LAYER_KEY,
 };
 
+static bool left_layer_pressed = false;
+static bool right_layer_pressed = false;
 
 typedef struct {
     uint16_t tap;
@@ -35,14 +45,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,         KC_Q,           KC_W,           KC_E,           KC_R,           KC_T,                                           KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           SE_AA,          
     KC_CAPS,        KC_A,           KC_S,           KC_D,           KC_F,           KC_G,                                           KC_H,           KC_J,           KC_K,           KC_L,           SE_OSLH,        SE_ADIA,        
     KC_LEFT_SHIFT,  KC_Z,           KC_X,           KC_C,           KC_V,           KC_B,                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         SE_MINS,        KC_RIGHT_SHIFT, 
-                                                                    MO(1),          KC_SPACE,                                       KC_ENTER,       MO(1)
+                                                                    LEFT_LAYER_KEY, KC_SPACE,                                       KC_ENTER,       RIGHT_LAYER_KEY
   ),
   [1] = LAYOUT_voyager(
     KC_AUDIO_MUTE,  KC_AUDIO_VOL_UP,LGUI(LCTL(LSFT(KC_4))),TD(DANCE_0),    TD(DANCE_1),    LGUI(LCTL(KC_SPACE)),                    MAC_DND,        SE_LCBR_MAC,    SE_RCBR_MAC,    SE_CIRC,        SE_TILD,        KC_TRANSPARENT,
     KC_AUDIO_VOL_DOWN,RGB_MODE_FORWARD,LALT(KC_A),     LALT(KC_D),     TD(DANCE_2),    LALT(KC_S),                                  SE_PIPE_MAC,    SE_LESS_MAC,    TD(DANCE_4),    ST_MACRO_0,     ST_MACRO_1,     KC_DELETE,
     TD(DANCE_3),    TOGGLE_LAYER_COLOR,KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    LALT(KC_4),                                  SE_APOS,        KC_RIGHT_GUI,   KC_RIGHT_ALT,   KC_RIGHT_CTRL,  ST_MACRO_2,     SE_ACUT,
     KC_TRANSPARENT, KC_BRIGHTNESS_DOWN,KC_BRIGHTNESS_UP,KC_MEDIA_PREV_TRACK,KC_MEDIA_NEXT_TRACK,KC_MEDIA_PLAY_PAUSE,                SE_BSLS_MAC,    SE_LBRC,        SE_RBRC,        SE_PLUS,        SE_MINS,        KC_TRANSPARENT,
-                                                                    MO(2),          MAC_SPOTLIGHT,                                  MAC_SPOTLIGHT,  MO(2)
+                                                                    KC_TRANSPARENT,   MAC_SPOTLIGHT,                                MAC_SPOTLIGHT,  KC_TRANSPARENT
   ),
   [2] = LAYOUT_voyager(
     RGB_HUI,        LALT(LGUI(KC_1)),LALT(LGUI(KC_2)),LALT(LGUI(KC_3)),LALT(LGUI(KC_4)),LALT(LGUI(KC_5)),                                LALT(LGUI(KC_6)),LALT(LGUI(KC_7)),LALT(LGUI(KC_8)),LALT(LGUI(KC_9)),LALT(LGUI(KC_0)),KC_TRANSPARENT, 
@@ -119,6 +129,56 @@ bool rgb_matrix_indicators_user(void) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
+    case LEFT_LAYER_KEY:
+      if (record->event.pressed) {
+        left_layer_pressed = true;
+
+        // If right is already pressed, go to UPPER layer
+        if (right_layer_pressed) {
+          layer_on(_UPPER);
+        } else {
+          // Otherwise just LOWER layer
+          layer_on(_LOWER);
+        }
+      } else {
+        left_layer_pressed = false;
+
+        if (right_layer_pressed) {
+          // Right still pressed, go back to LOWER
+          layer_off(_UPPER);
+        } else {
+          // No layer keys pressed, back to base
+          layer_off(_LOWER);
+          layer_off(_UPPER);
+        }
+      }
+      return false;
+
+    case RIGHT_LAYER_KEY:
+      if (record->event.pressed) {
+        right_layer_pressed = true;
+
+        // If left is already pressed, go to UPPER layer
+        if (left_layer_pressed) {
+          layer_on(_UPPER);
+        } else {
+          // Otherwise just LOWER layer
+          layer_on(_LOWER);
+        }
+      } else {
+        right_layer_pressed = false;
+
+        if (left_layer_pressed) {
+          // Left still pressed, go back to LOWER
+          layer_off(_UPPER);
+        } else {
+          // No layer keys pressed, back to base
+          layer_off(_LOWER);
+          layer_off(_UPPER);
+        }
+      }
+      return false;
+
     case ST_MACRO_0:
     if (record->event.pressed) {
       SEND_STRING(SS_LSFT(SS_TAP(X_RBRC))SS_DELAY(100)  SS_TAP(X_SPACE));
