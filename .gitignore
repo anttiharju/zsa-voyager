@@ -1,0 +1,14 @@
+# Build artifacts
+*.bin
+*.hex
+*.elf
+*.uf2
+
+# Build logs
+*.log
+
+# Checksums
+*.md5
+
+# OS specific
+.DS_Store
