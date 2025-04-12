@@ -12,6 +12,8 @@ Most of the code in this repository is imported from https://configure.zsa.io/vo
 
 Releasing the layer switch key from step 1 returns me to layer 2. This has been a constant footgun and the new setup feels more intuitive to me.
 
+The custom logic is in commit [`410e0a4`](https://github.com/anttiharju/zsa-voyager/commit/410e0a40dedc74d50f1cb79c3833ae781257591e)
+
 ## Simplified build guide on macOS
 
 Once:
