@@ -3,6 +3,7 @@
 *.hex
 *.elf
 *.uf2
+.build
 
 # Build logs
 *.log
