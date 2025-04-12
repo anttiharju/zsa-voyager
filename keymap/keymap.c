@@ -35,21 +35,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,         KC_Q,           KC_W,           KC_E,           KC_R,           KC_T,                                           KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           SE_AA,          
     KC_CAPS,        KC_A,           KC_S,           KC_D,           KC_F,           KC_G,                                           KC_H,           KC_J,           KC_K,           KC_L,           SE_OSLH,        SE_ADIA,        
     KC_LEFT_SHIFT,  KC_Z,           KC_X,           KC_C,           KC_V,           KC_B,                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         SE_MINS,        KC_RIGHT_SHIFT, 
-                                                    MO(1),          KC_SPACE,                                       KC_ENTER,       MO(1)
+                                                                    MO(1),          KC_SPACE,                                       KC_ENTER,       MO(1)
   ),
   [1] = LAYOUT_voyager(
-    KC_AUDIO_MUTE,  KC_AUDIO_VOL_UP,LGUI(LCTL(LSFT(KC_4))),TD(DANCE_0),    TD(DANCE_1),    LGUI(LCTL(KC_SPACE)),                                MAC_DND,        SE_LCBR_MAC,    SE_RCBR_MAC,    SE_CIRC,        SE_TILD,        KC_TRANSPARENT, 
-    KC_AUDIO_VOL_DOWN,RGB_MODE_FORWARD,LALT(KC_A),     LALT(KC_D),     TD(DANCE_2),    LALT(KC_S),                                     SE_PIPE_MAC,    SE_LESS_MAC,    TD(DANCE_4),    ST_MACRO_0,     ST_MACRO_1,     KC_DELETE,      
-    TD(DANCE_3),    TOGGLE_LAYER_COLOR,KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    LALT(KC_4),                                     SE_APOS,        KC_RIGHT_GUI,   KC_RIGHT_ALT,   KC_RIGHT_CTRL,  ST_MACRO_2,     SE_ACUT,        
-    KC_TRANSPARENT, KC_BRIGHTNESS_DOWN,KC_BRIGHTNESS_UP,KC_MEDIA_PREV_TRACK,KC_MEDIA_NEXT_TRACK,KC_MEDIA_PLAY_PAUSE,                                SE_BSLS_MAC,    SE_LBRC,        SE_RBRC,        SE_PLUS,        SE_MINS,        KC_TRANSPARENT, 
-                                                    MO(2),          MAC_SPOTLIGHT,                                  MAC_SPOTLIGHT,  MO(2)
+    KC_AUDIO_MUTE,  KC_AUDIO_VOL_UP,LGUI(LCTL(LSFT(KC_4))),TD(DANCE_0),    TD(DANCE_1),    LGUI(LCTL(KC_SPACE)),                    MAC_DND,        SE_LCBR_MAC,    SE_RCBR_MAC,    SE_CIRC,        SE_TILD,        KC_TRANSPARENT,
+    KC_AUDIO_VOL_DOWN,RGB_MODE_FORWARD,LALT(KC_A),     LALT(KC_D),     TD(DANCE_2),    LALT(KC_S),                                  SE_PIPE_MAC,    SE_LESS_MAC,    TD(DANCE_4),    ST_MACRO_0,     ST_MACRO_1,     KC_DELETE,
+    TD(DANCE_3),    TOGGLE_LAYER_COLOR,KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    LALT(KC_4),                                  SE_APOS,        KC_RIGHT_GUI,   KC_RIGHT_ALT,   KC_RIGHT_CTRL,  ST_MACRO_2,     SE_ACUT,
+    KC_TRANSPARENT, KC_BRIGHTNESS_DOWN,KC_BRIGHTNESS_UP,KC_MEDIA_PREV_TRACK,KC_MEDIA_NEXT_TRACK,KC_MEDIA_PLAY_PAUSE,                SE_BSLS_MAC,    SE_LBRC,        SE_RBRC,        SE_PLUS,        SE_MINS,        KC_TRANSPARENT,
+                                                                    MO(2),          MAC_SPOTLIGHT,                                  MAC_SPOTLIGHT,  MO(2)
   ),
   [2] = LAYOUT_voyager(
     RGB_HUI,        LALT(LGUI(KC_1)),LALT(LGUI(KC_2)),LALT(LGUI(KC_3)),LALT(LGUI(KC_4)),LALT(LGUI(KC_5)),                                LALT(LGUI(KC_6)),LALT(LGUI(KC_7)),LALT(LGUI(KC_8)),LALT(LGUI(KC_9)),LALT(LGUI(KC_0)),KC_TRANSPARENT, 
     RGB_HUD,        KC_F1,          KC_F2,          KC_F3,          KC_F4,          KC_F5,                                          KC_F6,          KC_F7,          KC_F8,          KC_F9,          KC_F10,         KC_F11,         
     LED_LEVEL,      RGB_TOG,        KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    KC_TRANSPARENT,                                 KC_LEFT,        KC_DOWN,        KC_UP,          KC_RIGHT,       KC_TRANSPARENT, KC_F12,         
     KC_TRANSPARENT, KC_TRANSPARENT, KC_END,         KC_HOME,        KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_PAGE_UP,     KC_PGDN,        KC_TRANSPARENT, KC_TRANSPARENT, 
-                                                    KC_TRANSPARENT, KC_SPACE,                                       KC_ENTER,       KC_TRANSPARENT
+                                                                    KC_TRANSPARENT, KC_SPACE,                                       KC_ENTER,       KC_TRANSPARENT
   ),
 };
 
