@@ -24,7 +24,7 @@ enum custom_keycodes {
 };
 
 
-static bool left_layer_pressed = false;Add commentMore actions
+static bool left_layer_pressed = false;
 static bool right_layer_pressed = false;
 
 
