@@ -131,7 +131,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         // If right is already pressed, go to UPPER layer
         if (right_layer_pressed) {
           layer_on(_UPPER);
-        } else {Add commentMore actions
+        } else {
           // Otherwise just LOWER layer
           layer_on(_LOWER);
         }
