@@ -5,11 +5,11 @@
 #define SE_PLUS KC_MINS
 #define SE_GRTR_MAC S(KC_GRV)
 #define SE_LESS_MAC KC_GRV
-#define SE_TILD ALGR(KC_RBRC)
+#define SE_CIRC S(KC_RBRC)
 #define SE_PIPE_MAC ALGR(KC_7)
 #define SE_LBRC ALGR(KC_8)
 #define SE_RBRC ALGR(KC_9)
-#define SE_CIRC S(KC_RBRC)
+#define SE_TILD ALGR(KC_RBRC)
 #define SE_APOS KC_NUHS
 #define SE_BSLS_MAC S(ALGR(KC_7))
 #define SE_LCBR_MAC S(ALGR(KC_8))
