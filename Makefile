@@ -22,5 +22,5 @@ setup:
 	brew tap osx-cross/arm
 	brew tap osx-cross/avr
 	brew install qmk/qmk/qmk
-	qmk setup zsa/qmk_firmware -b firmware24 --yes
+	qmk setup zsa/qmk_firmware -b firmware25 --yes
 .PHONY: setup
