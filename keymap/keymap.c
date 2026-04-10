@@ -109,20 +109,28 @@ void set_layer_color(int layer) {
 
 bool rgb_matrix_indicators_user(void) {
   if (!keyboard_config.disable_layer_led) { 
-    switch (biton32(layer_state)) {
-      case 0:
-        set_layer_color(0);
-        break;
-      case 1:
-        set_layer_color(1);
-        break;
-      case 2:
-        set_layer_color(2);
-        break;
-     default:
-        if (rgb_matrix_get_flags() == LED_FLAG_NONE) {
-          rgb_matrix_set_color_all(0, 0, 0);
-        }
+    // Check if caps lock is on and we're on layer 0
+    led_t led_state = host_keyboard_led_state();
+    if (led_state.caps_lock && biton32(layer_state) == 0) {
+      // Show all LEDs in red when caps lock is on in layer 0
+      rgb_matrix_set_color_all(255, 0, 0);
+    } else {
+      // Normal layer coloring
+      switch (biton32(layer_state)) {
+        case 0:
+          set_layer_color(0);
+          break;
+        case 1:
+          set_layer_color(1);
+          break;
+        case 2:
+          set_layer_color(2);
+          break;
+       default:
+          if (rgb_matrix_get_flags() == LED_FLAG_NONE) {
+            rgb_matrix_set_color_all(0, 0, 0);
+          }
+      }
     }
   } else {
     if (rgb_matrix_get_flags() == LED_FLAG_NONE) {

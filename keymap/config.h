@@ -1,7 +1,6 @@
 #define PERMISSIVE_HOLD
 
 #define USB_SUSPEND_WAKEUP_DELAY 0
-#define CAPS_LOCK_STATUS
 #define HOLD_ON_OTHER_KEY_PRESS
 #define LAYER_STATE_8BIT
 #define HSS(report) host_system_send(record->event.pressed ? report : 0); return false
