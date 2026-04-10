@@ -80,6 +80,12 @@ RGB hsv_to_rgb_with_value(HSV hsv) {
 
 void keyboard_post_init_user(void) {
   rgb_matrix_enable();
+  rgb_matrix_set_flags(LED_FLAG_NONE);
+  keyboard_config.led_level = false;
+  STATUS_LED_1(false);
+  STATUS_LED_2(false);
+  STATUS_LED_3(false);
+  STATUS_LED_4(false);
 }
 
 const uint8_t PROGMEM ledmap[][RGB_MATRIX_LED_COUNT][3] = {
