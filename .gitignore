@@ -13,3 +13,6 @@ build
 
 # OS specific
 .DS_Store
+
+# nix-direnv
+.direnv
