@@ -6,12 +6,6 @@
 #define ZSA_SAFE_RANGE SAFE_RANGE
 #endif
 
-enum layers {
-  _BASE,
-  _LOWER,
-  _UPPER,
-};
-
 enum custom_keycodes {
   RGB_SLD = ZSA_SAFE_RANGE,
   ST_MACRO_0,
@@ -19,18 +13,13 @@ enum custom_keycodes {
   ST_MACRO_2,
   MAC_SPOTLIGHT,
   MAC_DND,
-  LEFT_LAYER_KEY,
-  RIGHT_LAYER_KEY,
 };
 
 
-static bool left_layer_pressed = false;
-static bool right_layer_pressed = false;
 
-
-#define DUAL_FUNC_0 LT(14, KC_F4)
-#define DUAL_FUNC_1 LT(3, KC_F18)
-#define DUAL_FUNC_2 LT(9, KC_F10)
+#define DUAL_FUNC_0 LT(4, KC_Z)
+#define DUAL_FUNC_1 LT(11, KC_R)
+#define DUAL_FUNC_2 LT(5, KC_3)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
@@ -38,14 +27,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,         KC_Q,           KC_W,           KC_E,           KC_R,           KC_T,                                           KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           SE_AA,          
     KC_CAPS,        KC_A,           KC_S,           KC_D,           KC_F,           KC_G,                                           KC_H,           KC_J,           KC_K,           KC_L,           SE_OSLH,        SE_ADIA,        
     KC_LEFT_SHIFT,  KC_Z,           KC_X,           KC_C,           KC_V,           KC_B,                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         SE_MINS,        KC_RIGHT_SHIFT, 
-                                                    LEFT_LAYER_KEY,          KC_SPACE,                                       KC_ENTER,       RIGHT_LAYER_KEY
+                                                    MO(1),          KC_SPACE,                                       KC_ENTER,       MO(1)
   ),
   [1] = LAYOUT_voyager(
     LGUI(SE_MINS),  LGUI(SE_PLUS),  LGUI(LCTL(LSFT(KC_4))),DUAL_FUNC_0,    DUAL_FUNC_1,    MAC_DND,                                        SE_GRTR_MAC,    SE_PLUS,        SE_LESS_MAC,    ST_MACRO_0,     SE_CIRC,        KC_TRANSPARENT, 
     KC_MEDIA_PREV_TRACK,KC_MEDIA_NEXT_TRACK,KC_MEDIA_PLAY_PAUSE,LGUI(LCTL(KC_TAB)),LGUI(KC_TAB),   KC_PAGE_UP,                                     SE_PIPE_MAC,    SE_LBRC,        SE_RBRC,        ST_MACRO_1,     SE_TILD,        KC_DELETE,      
     DUAL_FUNC_2,    TOGGLE_LAYER_COLOR,KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    KC_PGDN,                                        SE_APOS,        KC_RIGHT_GUI,   KC_RIGHT_ALT,   KC_RIGHT_CTRL,  KC_BRIGHTNESS_DOWN,KC_BRIGHTNESS_UP,
     KC_TRANSPARENT, KC_AUDIO_VOL_DOWN,KC_AUDIO_VOL_UP,KC_END,         KC_HOME,        KC_AUDIO_MUTE,                                  SE_BSLS_MAC,    SE_LCBR_MAC,    SE_RCBR_MAC,    ST_MACRO_2,     SE_ACUT,        KC_TRANSPARENT, 
-                                                    KC_TRANSPARENT,          MAC_SPOTLIGHT,                                  MAC_SPOTLIGHT,  KC_TRANSPARENT
+                                                    MO(2),          MAC_SPOTLIGHT,                                  MAC_SPOTLIGHT,  MO(2)
   ),
   [2] = LAYOUT_voyager(
     KC_TRANSPARENT, LALT(LGUI(KC_1)),LALT(LGUI(KC_2)),LALT(LGUI(KC_3)),LALT(LGUI(KC_4)),LALT(LGUI(KC_5)),                                LALT(LGUI(KC_6)),LALT(LGUI(KC_7)),LALT(LGUI(KC_8)),LALT(LGUI(KC_9)),LALT(LGUI(KC_0)),KC_TRANSPARENT, 
@@ -69,7 +58,14 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
+
 extern rgb_config_t rgb_matrix_config;
+
+RGB hsv_to_rgb_with_value(HSV hsv) {
+  RGB rgb = hsv_to_rgb( hsv );
+  float f = (float)rgb_matrix_config.hsv.v / UINT8_MAX;
+  return (RGB){ f * rgb.r, f * rgb.g, f * rgb.b };
+}
 
 void keyboard_post_init_user(void) {
   rgb_matrix_enable();
@@ -94,84 +90,59 @@ void set_layer_color(int layer) {
     if (!hsv.h && !hsv.s && !hsv.v) {
         rgb_matrix_set_color( i, 0, 0, 0 );
     } else {
-        RGB rgb = hsv_to_rgb( hsv );
-        float f = (float)rgb_matrix_config.hsv.v / UINT8_MAX;
-        rgb_matrix_set_color( i, f * rgb.r, f * rgb.g, f * rgb.b );
+        RGB rgb = hsv_to_rgb_with_value(hsv);
+        rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
     }
   }
 }
 
 bool rgb_matrix_indicators_user(void) {
-  if (keyboard_config.disable_layer_led) { return false; }
-  switch (biton32(layer_state)) {
-    case 0:
-      set_layer_color(0);
-      break;
-    case 1:
-      set_layer_color(1);
-      break;
-    case 2:
-      set_layer_color(2);
-      break;
-   default:
-    if (rgb_matrix_get_flags() == LED_FLAG_NONE)
+  if (!keyboard_config.disable_layer_led) { 
+    switch (biton32(layer_state)) {
+      case 0:
+        set_layer_color(0);
+        break;
+      case 1:
+        set_layer_color(1);
+        break;
+      case 2:
+        set_layer_color(2);
+        break;
+     default:
+        if (rgb_matrix_get_flags() == LED_FLAG_NONE) {
+          rgb_matrix_set_color_all(0, 0, 0);
+        }
+    }
+  } else {
+    if (rgb_matrix_get_flags() == LED_FLAG_NONE) {
       rgb_matrix_set_color_all(0, 0, 0);
-    break;
+    }
   }
+
   return true;
 }
 
 
+
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
-    case LEFT_LAYER_KEY:
+  case QK_MODS ... QK_MODS_MAX:
+    // Mouse and consumer keys (volume, media) with modifiers work inconsistently across operating systems,
+    // this makes sure that modifiers are always applied to the key that was pressed.
+    if (IS_CONSUMER_KEYCODE(QK_MODS_GET_BASIC_KEYCODE(keycode))) {
       if (record->event.pressed) {
-        left_layer_pressed = true;
-
-        // If right is already pressed, go to UPPER layer
-        if (right_layer_pressed) {
-          layer_on(_UPPER);
-        } else {
-          // Otherwise just LOWER layer
-          layer_on(_LOWER);
-        }
+        add_mods(QK_MODS_GET_MODS(keycode));
+        send_keyboard_report();
+        wait_ms(2);
+        register_code(QK_MODS_GET_BASIC_KEYCODE(keycode));
+        return false;
       } else {
-        left_layer_pressed = false;
-
-        if (right_layer_pressed) {
-          // Right still pressed, go back to LOWER
-          layer_off(_UPPER);
-        } else {
-          // No layer keys pressed, back to base
-          layer_off(_LOWER);
-          layer_off(_UPPER);
-        }
+        wait_ms(2);
+        del_mods(QK_MODS_GET_MODS(keycode));
       }
-      return false;
-    case RIGHT_LAYER_KEY:
-      if (record->event.pressed) {
-        right_layer_pressed = true;
-
-        // If left is already pressed, go to UPPER layer
-        if (left_layer_pressed) {
-          layer_on(_UPPER);
-        } else {
-          // Otherwise just LOWER layer
-          layer_on(_LOWER);
-        }
-      } else {
-        right_layer_pressed = false;
-
-        if (left_layer_pressed) {
-          // Left still pressed, go back to LOWER
-          layer_off(_UPPER);
-        } else {
-          // No layer keys pressed, back to base
-          layer_off(_LOWER);
-          layer_off(_UPPER);
-        }
-      }
-      return false;
+    }
+    break;
     case ST_MACRO_0:
     if (record->event.pressed) {
       SEND_STRING(SS_LSFT(SS_TAP(X_RBRC))SS_DELAY(100)  SS_TAP(X_SPACE));
