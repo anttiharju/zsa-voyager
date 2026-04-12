@@ -32,8 +32,8 @@ static bool right_layer_pressed = false;
 #define DUAL_FUNC_1 LT(11, KC_R)
 #define DUAL_FUNC_2 LT(5, KC_3)
 
-#define WPM_THRESHOLD 40
-#define WPM_RAINBOW_THRESHOLD 50
+#define WPM_THRESHOLD 80
+#define WPM_RAINBOW_THRESHOLD 100
 
 static bool rainbow_active = false;
 
