@@ -33,6 +33,9 @@ static bool right_layer_pressed = false;
 #define DUAL_FUNC_2 LT(5, KC_3)
 
 #define WPM_THRESHOLD 40
+#define WPM_RAINBOW_THRESHOLD 50
+
+static bool rainbow_active = false;
 
 #define IS_CAPS_RED_LED(i) ((i) == 0 || (i) == 24 || (i) == 25 || (i) == 50 || (i) == 51)
 
@@ -118,6 +121,20 @@ void set_layer_color(int layer) {
 }
 
 bool rgb_matrix_indicators_user(void) {
+  // Rainbow mode when typing fast on layer 0
+  if (biton32(layer_state) == 0 && get_current_wpm() > WPM_RAINBOW_THRESHOLD) {
+    if (!rainbow_active) {
+      rainbow_active = true;
+      rgb_matrix_set_flags(LED_FLAG_ALL);
+      rgb_matrix_mode(RGB_MATRIX_CYCLE_LEFT_RIGHT);
+    }
+    return true;
+  }
+  if (rainbow_active) {
+    rainbow_active = false;
+    rgb_matrix_set_flags(LED_FLAG_NONE);
+  }
+
   if (!keyboard_config.disable_layer_led) { 
     // Check if caps lock is on and we're on layer 0
     led_t led_state = host_keyboard_led_state();
