@@ -32,6 +32,8 @@ static bool right_layer_pressed = false;
 #define DUAL_FUNC_1 LT(11, KC_R)
 #define DUAL_FUNC_2 LT(5, KC_3)
 
+#define WPM_THRESHOLD 40
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
     KC_ESCAPE,      KC_1,           KC_2,           KC_3,           KC_4,           KC_5,                                           KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_BSPC,        
@@ -124,7 +126,11 @@ bool rgb_matrix_indicators_user(void) {
       // Normal layer coloring
       switch (biton32(layer_state)) {
         case 0:
-          set_layer_color(0);
+          if (get_current_wpm() > WPM_THRESHOLD) {
+            rgb_matrix_set_color_all(255, 255, 255);
+          } else {
+            set_layer_color(0);
+          }
           break;
         case 1:
           set_layer_color(1);
