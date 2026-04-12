@@ -34,6 +34,12 @@ static bool right_layer_pressed = false;
 
 #define WPM_THRESHOLD 40
 
+#define CAPS_FADE_MS 500
+#define IS_THUMB_LED(i) ((i) == 24 || (i) == 25 || (i) == 50 || (i) == 51)
+
+static uint16_t caps_led_timer[RGB_MATRIX_LED_COUNT];
+static bool caps_led_hit[RGB_MATRIX_LED_COUNT];
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
     KC_ESCAPE,      KC_1,           KC_2,           KC_3,           KC_4,           KC_5,                                           KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_BSPC,        
@@ -120,8 +126,42 @@ bool rgb_matrix_indicators_user(void) {
     // Check if caps lock is on and we're on layer 0
     led_t led_state = host_keyboard_led_state();
     if (led_state.caps_lock && biton32(layer_state) == 0) {
-      // Show all LEDs in red when caps lock is on in layer 0
-      rgb_matrix_set_color_all(255, 0, 0);
+      // Base layer colors first
+      if (get_current_wpm() > WPM_THRESHOLD) {
+        rgb_matrix_set_color_all(255, 255, 255);
+      } else {
+        set_layer_color(0);
+      }
+      // Thumb clusters: solid red. Other keys: fade from red on press.
+      for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
+        if (IS_THUMB_LED(i)) {
+          rgb_matrix_set_color(i, 255, 0, 0);
+        } else if (caps_led_hit[i]) {
+          uint16_t elapsed = timer_elapsed(caps_led_timer[i]);
+          if (elapsed >= CAPS_FADE_MS) {
+            caps_led_hit[i] = false;
+          } else {
+            // Read base color for this LED
+            HSV hsv = {
+              .h = pgm_read_byte(&ledmap[0][i][0]),
+              .s = pgm_read_byte(&ledmap[0][i][1]),
+              .v = pgm_read_byte(&ledmap[0][i][2]),
+            };
+            RGB base;
+            if (get_current_wpm() > WPM_THRESHOLD) {
+              base = (RGB){255, 255, 255};
+            } else {
+              base = hsv_to_rgb_with_value(hsv);
+            }
+            // Blend from red to base
+            uint8_t fade = (uint16_t)elapsed * 255 / CAPS_FADE_MS;
+            uint8_t r = 255 - (uint16_t)(255 - base.r) * fade / 255;
+            uint8_t g = (uint16_t)base.g * fade / 255;
+            uint8_t b = (uint16_t)base.b * fade / 255;
+            rgb_matrix_set_color(i, r, g, b);
+          }
+        }
+      }
     } else {
       // Normal layer coloring
       switch (biton32(layer_state)) {
@@ -202,6 +242,17 @@ bool rgb_matrix_indicators_user(void) {
 
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  // Track keypress timestamps for caps lock fade effect
+  if (record->event.pressed) {
+    led_t led_state = host_keyboard_led_state();
+    if (led_state.caps_lock) {
+      uint8_t led_idx = g_led_config.matrix_co[record->event.key.row][record->event.key.col];
+      if (led_idx != NO_LED) {
+        caps_led_timer[led_idx] = timer_read();
+        caps_led_hit[led_idx] = true;
+      }
+    }
+  }
   switch (keycode) {
     case LEFT_LAYER_KEY:
       if (record->event.pressed) {
