@@ -39,6 +39,7 @@ static bool right_layer_pressed = false;
 #define CAPS_WAVE_WIDTH 30
 #define CAPS_MAX_WAVES 16
 #define IS_THUMB_LED(i) ((i) == 24 || (i) == 25 || (i) == 50 || (i) == 51)
+#define CAPS_LED 0
 
 typedef struct {
   uint8_t x;
@@ -144,7 +145,7 @@ bool rgb_matrix_indicators_user(void) {
       }
       // Thumb clusters: solid red. Other keys: wave ripple from keypresses.
       for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
-        if (IS_THUMB_LED(i)) {
+        if (IS_THUMB_LED(i) || i == CAPS_LED) {
           rgb_matrix_set_color(i, 255, 0, 0);
           continue;
         }
