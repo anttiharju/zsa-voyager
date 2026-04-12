@@ -34,22 +34,7 @@ static bool right_layer_pressed = false;
 
 #define WPM_THRESHOLD 40
 
-#define CAPS_WAVE_MS 1500
-#define CAPS_WAVE_SPEED 30
-#define CAPS_WAVE_WIDTH 30
-#define CAPS_MAX_WAVES 16
-#define IS_THUMB_LED(i) ((i) == 24 || (i) == 25 || (i) == 50 || (i) == 51)
-#define CAPS_LED 0
-
-typedef struct {
-  uint8_t x;
-  uint8_t y;
-  uint16_t time;
-  bool active;
-} caps_wave_t;
-
-static caps_wave_t caps_waves[CAPS_MAX_WAVES];
-static uint8_t caps_wave_idx = 0;
+#define IS_CAPS_RED_LED(i) ((i) == 0 || (i) == 24 || (i) == 25 || (i) == 50 || (i) == 51)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
@@ -143,36 +128,9 @@ bool rgb_matrix_indicators_user(void) {
       } else {
         set_layer_color(0);
       }
-      // Thumb clusters: solid red. Other keys: wave ripple from keypresses.
+      // Static red on caps lock key and thumb clusters
       for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
-        if (IS_THUMB_LED(i) || i == CAPS_LED) {
-          rgb_matrix_set_color(i, 255, 0, 0);
-          continue;
-        }
-        bool hit = false;
-        uint8_t led_x = g_led_config.point[i].x;
-        uint8_t led_y = g_led_config.point[i].y;
-        for (int w = 0; w < CAPS_MAX_WAVES; w++) {
-          if (!caps_waves[w].active) continue;
-          uint16_t elapsed = timer_elapsed(caps_waves[w].time);
-          if (elapsed >= CAPS_WAVE_MS) {
-            caps_waves[w].active = false;
-            continue;
-          }
-          int16_t radius = (int16_t)elapsed * CAPS_WAVE_SPEED / 100;
-          int16_t dx = (int16_t)led_x - (int16_t)caps_waves[w].x;
-          int16_t dy = (int16_t)led_y - (int16_t)caps_waves[w].y;
-          int16_t dist = (dx * dx + dy * dy);
-          int16_t r2 = radius * radius;
-          int16_t width2 = CAPS_WAVE_WIDTH * CAPS_WAVE_WIDTH;
-          int16_t diff = dist - r2;
-          if (diff < 0) diff = -diff;
-          if (diff < width2) {
-            hit = true;
-            break;
-          }
-        }
-        if (hit) {
+        if (IS_CAPS_RED_LED(i)) {
           rgb_matrix_set_color(i, 255, 0, 0);
         }
       }
@@ -256,20 +214,6 @@ bool rgb_matrix_indicators_user(void) {
 
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  // Track keypress for caps lock wave effect
-  if (record->event.pressed) {
-    led_t led_state = host_keyboard_led_state();
-    if (led_state.caps_lock) {
-      uint8_t led_idx = g_led_config.matrix_co[record->event.key.row][record->event.key.col];
-      if (led_idx != NO_LED) {
-        caps_waves[caps_wave_idx].x = g_led_config.point[led_idx].x;
-        caps_waves[caps_wave_idx].y = g_led_config.point[led_idx].y;
-        caps_waves[caps_wave_idx].time = timer_read();
-        caps_waves[caps_wave_idx].active = true;
-        caps_wave_idx = (caps_wave_idx + 1) % CAPS_MAX_WAVES;
-      }
-    }
-  }
   switch (keycode) {
     case LEFT_LAYER_KEY:
       if (record->event.pressed) {
