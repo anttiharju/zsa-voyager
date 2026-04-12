@@ -144,6 +144,51 @@ bool rgb_matrix_indicators_user(void) {
     }
   }
 
+  // Turn off columns for held layer 1 modifiers
+  uint8_t mods = get_mods();
+  // Left CTRL - left column 2 (LEDs 2, 8, 14, 20)
+  if (mods & MOD_BIT(KC_LEFT_CTRL)) {
+    rgb_matrix_set_color(2, 0, 0, 0);
+    rgb_matrix_set_color(8, 0, 0, 0);
+    rgb_matrix_set_color(14, 0, 0, 0);
+    rgb_matrix_set_color(20, 0, 0, 0);
+  }
+  // Left ALT - left column 3 (LEDs 3, 9, 15, 21)
+  if (mods & MOD_BIT(KC_LEFT_ALT)) {
+    rgb_matrix_set_color(3, 0, 0, 0);
+    rgb_matrix_set_color(9, 0, 0, 0);
+    rgb_matrix_set_color(15, 0, 0, 0);
+    rgb_matrix_set_color(21, 0, 0, 0);
+  }
+  // Left GUI - left column 4 (LEDs 4, 10, 16, 22)
+  if (mods & MOD_BIT(KC_LEFT_GUI)) {
+    rgb_matrix_set_color(4, 0, 0, 0);
+    rgb_matrix_set_color(10, 0, 0, 0);
+    rgb_matrix_set_color(16, 0, 0, 0);
+    rgb_matrix_set_color(22, 0, 0, 0);
+  }
+  // Right GUI - right column 1 (LEDs 27, 33, 39, 45)
+  if (mods & MOD_BIT(KC_RIGHT_GUI)) {
+    rgb_matrix_set_color(27, 0, 0, 0);
+    rgb_matrix_set_color(33, 0, 0, 0);
+    rgb_matrix_set_color(39, 0, 0, 0);
+    rgb_matrix_set_color(45, 0, 0, 0);
+  }
+  // Right ALT - right column 2 (LEDs 28, 34, 40, 46)
+  if (mods & MOD_BIT(KC_RIGHT_ALT)) {
+    rgb_matrix_set_color(28, 0, 0, 0);
+    rgb_matrix_set_color(34, 0, 0, 0);
+    rgb_matrix_set_color(40, 0, 0, 0);
+    rgb_matrix_set_color(46, 0, 0, 0);
+  }
+  // Right CTRL - right column 3 (LEDs 29, 35, 41, 47)
+  if (mods & MOD_BIT(KC_RIGHT_CTRL)) {
+    rgb_matrix_set_color(29, 0, 0, 0);
+    rgb_matrix_set_color(35, 0, 0, 0);
+    rgb_matrix_set_color(41, 0, 0, 0);
+    rgb_matrix_set_color(47, 0, 0, 0);
+  }
+
   return true;
 }
 
