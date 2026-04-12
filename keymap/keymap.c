@@ -126,7 +126,7 @@ bool rgb_matrix_indicators_user(void) {
     if (!rainbow_active) {
       rainbow_active = true;
       rgb_matrix_set_flags(LED_FLAG_ALL);
-      rgb_matrix_mode(RGB_MATRIX_CYCLE_LEFT_RIGHT);
+      rgb_matrix_mode(RGB_MATRIX_CYCLE_OUT_IN);
     }
     return true;
   }
