@@ -10,6 +10,7 @@ enum layers {
   _BASE,
   _LOWER,
   _UPPER,
+  _WORKMAN,
 };
 
 enum custom_keycodes {
@@ -21,7 +22,12 @@ enum custom_keycodes {
   MAC_DND,
   LEFT_LAYER_KEY,
   RIGHT_LAYER_KEY,
+  TOGGLE_BASE_LAYOUT,
 };
+
+static inline bool workman_active(void) {
+  return get_highest_layer(default_layer_state) == _WORKMAN;
+}
 
 static bool left_layer_pressed = false;
 static bool right_layer_pressed = false;
@@ -54,9 +60,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [2] = LAYOUT_voyager(
     KC_TRANSPARENT, LALT(LGUI(KC_1)),LALT(LGUI(KC_2)),LALT(LGUI(KC_3)),LALT(LGUI(KC_4)),LALT(LGUI(KC_5)),                                LALT(LGUI(KC_6)),LALT(LGUI(KC_7)),LALT(LGUI(KC_8)),LALT(LGUI(KC_9)),LALT(LGUI(KC_0)),KC_TRANSPARENT, 
     RGB_MODE_FORWARD,KC_F1,          KC_F2,          KC_F3,          KC_F4,          KC_F5,                                          KC_F6,          KC_F7,          KC_F8,          KC_F9,          KC_F10,         KC_F11,         
-    RGB_TOG,        LED_LEVEL,      KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    KC_TRANSPARENT,                                 KC_LEFT,        KC_DOWN,        KC_UP,          KC_RIGHT,       KC_TRANSPARENT, KC_F12,         
+    RGB_TOG,        LED_LEVEL,      KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    TOGGLE_BASE_LAYOUT,                             KC_LEFT,        KC_DOWN,        KC_UP,          KC_RIGHT,       KC_TRANSPARENT, KC_F12,         
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
                                                     KC_TRANSPARENT, KC_SPACE,                                       KC_ENTER,       KC_TRANSPARENT
+  ),
+  [3] = LAYOUT_voyager(
+    KC_ESCAPE,      KC_1,           KC_2,           KC_3,           KC_4,           KC_5,                                           KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_BSPC,        
+    KC_TAB,         KC_Q,           KC_D,           KC_R,           KC_W,           KC_B,                                           KC_J,           KC_F,           KC_U,           KC_P,           SE_OSLH,        SE_AA,          
+    KC_CAPS,        KC_A,           KC_S,           KC_H,           KC_T,           KC_G,                                           KC_Y,           KC_N,           KC_E,           KC_O,           KC_I,           SE_ADIA,        
+    KC_LEFT_SHIFT,  KC_Z,           KC_X,           KC_M,           KC_C,           KC_V,                                           KC_K,           KC_L,           KC_COMMA,       KC_DOT,         SE_MINS,        KC_RIGHT_SHIFT, 
+                                                                    LEFT_LAYER_KEY, KC_SPACE,                                       KC_ENTER,       RIGHT_LAYER_KEY
   ),
 };
 
@@ -97,17 +110,29 @@ const uint8_t PROGMEM ledmap[][RGB_MATRIX_LED_COUNT][3] = {
 
     [1] = { {154,255,255}, {154,255,255}, {14,255,255}, {105,255,255}, {105,255,255}, {0,0,255}, {105,255,255}, {105,255,255}, {105,255,255}, {154,255,255}, {154,255,255}, {105,255,255}, {248,255,255}, {35,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {105,255,255}, {14,255,255}, {154,255,255}, {154,255,255}, {105,255,255}, {105,255,255}, {154,255,255}, {105,255,255}, {0,0,255}, {105,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {14,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {14,255,255}, {105,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {0,0,255}, {0,0,255}, {105,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {14,255,255}, {0,0,255}, {105,255,255} },
 
-    [2] = { {0,0,0}, {105,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {35,255,255}, {154,255,255}, {154,255,255}, {154,255,255}, {154,255,255}, {154,255,255}, {35,255,255}, {35,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {0,0,0}, {14,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {154,255,255}, {154,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {14,255,255}, {154,255,255}, {154,255,255}, {154,255,255}, {154,255,255}, {154,255,255}, {154,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {0,0,0}, {154,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {14,255,255}, {154,255,255}, {154,255,255} },
+    [2] = { {0,0,0}, {105,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {35,255,255}, {154,255,255}, {154,255,255}, {154,255,255}, {154,255,255}, {154,255,255}, {35,255,255}, {35,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {0,0,255}, {14,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {154,255,255}, {154,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {105,255,255}, {14,255,255}, {154,255,255}, {154,255,255}, {154,255,255}, {154,255,255}, {154,255,255}, {154,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {0,0,0}, {154,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {14,255,255}, {154,255,255}, {154,255,255} },
+
+    [3] = { {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255}, {14,255,255} },
 
 };
 
 void set_layer_color(int layer) {
+  bool swap = workman_active();
   for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
     HSV hsv = {
       .h = pgm_read_byte(&ledmap[layer][i][0]),
       .s = pgm_read_byte(&ledmap[layer][i][1]),
       .v = pgm_read_byte(&ledmap[layer][i][2]),
     };
+    if (swap) {
+      if (hsv.h == 14 && hsv.s == 255 && hsv.v == 255) {
+        // orange -> white
+        hsv.h = 0; hsv.s = 0; hsv.v = 255;
+      } else if (hsv.s == 0 && hsv.v == 255) {
+        // white -> orange
+        hsv.h = 14; hsv.s = 255; hsv.v = 255;
+      }
+    }
     if (!hsv.h && !hsv.s && !hsv.v) {
         rgb_matrix_set_color( i, 0, 0, 0 );
     } else {
@@ -121,12 +146,18 @@ bool rgb_matrix_indicators_user(void) {
   if (!keyboard_config.disable_layer_led) { 
     // Check if caps lock is on and we're on layer 0
     led_t led_state = host_keyboard_led_state();
+    bool workman = workman_active();
+    uint8_t base_layer = workman ? _WORKMAN : _BASE;
+    // WPM>100: white in QWERTY, orange (hue 14) in Workman
+    const uint8_t WPM_R = 255;
+    const uint8_t WPM_G = workman ? 84  : 255;
+    const uint8_t WPM_B = workman ? 0   : 255;
     if (led_state.caps_lock && biton32(layer_state) == 0) {
       // Base layer colors first
       if (get_current_wpm() > WPM_THRESHOLD) {
-        rgb_matrix_set_color_all(255, 255, 255);
+        rgb_matrix_set_color_all(WPM_R, WPM_G, WPM_B);
       } else {
-        set_layer_color(0);
+        set_layer_color(base_layer);
       }
       // Static red on caps lock key and thumb clusters
       for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
@@ -139,9 +170,9 @@ bool rgb_matrix_indicators_user(void) {
       switch (biton32(layer_state)) {
         case 0:
           if (get_current_wpm() > WPM_THRESHOLD) {
-            rgb_matrix_set_color_all(255, 255, 255);
+            rgb_matrix_set_color_all(WPM_R, WPM_G, WPM_B);
           } else {
-            set_layer_color(0);
+            set_layer_color(base_layer);
           }
           break;
         case 1:
@@ -215,6 +246,11 @@ bool rgb_matrix_indicators_user(void) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
+    case TOGGLE_BASE_LAYOUT:
+      if (record->event.pressed) {
+        set_single_persistent_default_layer(workman_active() ? _BASE : _WORKMAN);
+      }
+      return false;
     case LEFT_LAYER_KEY:
       if (record->event.pressed) {
         left_layer_pressed = true;
